@@ -1,0 +1,124 @@
+🚀 Guia — Rodar o projeto pela primeira vez em outro PC
+
+1. Instalar o necessário
+No PC novo, instale:
+
+* Docker Desktop
+* Git
+
+Não precisa instalar XAMPP, PHP, Composer, MySQL ou Node.js no Windows, porque eles ficam dentro dos containers.
+
+2. Baixar o projeto
+Abra o PowerShell e faça:
+
+
+git clone URL_DO_SEU_REPOSITORIO
+
+Entre na pasta:
+
+cd PROJETO-FINAL-2026
+
+
+3. Criar o `.env`
+Se o `.env` não estiver no GitHub, copie o `.env.example`:
+
+copy .env.example .env
+
+Depois verifique se tem as seguintes configurações do banco no `.env`:
+
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=projeto
+DB_USERNAME=root
+DB_PASSWORD=root
+
+
+4. Criar e iniciar os containers
+
+docker compose up -d --build
+
+Confira:
+
+docker compose ps
+
+Deve aparecer algo parecido com:
+
+projeto-final-2026-app-1    Up
+projeto-final-2026-db-1     Up
+
+
+5. Instalar as dependências do Laravel
+Como o `vendor` fica dentro do Docker, faça:
+
+docker compose run --rm --entrypoint bash app
+
+Dentro do container:
+
+composer install
+
+Depois:
+
+php artisan key:generate
+
+E:
+
+php artisan migrate
+
+Se o projeto já tiver um banco/SQL que precisa ser importado, não rode o migrate antes de importar esse banco.
+Saia:
+
+exit
+
+
+
+6. Instalar as dependências do Node
+Ainda no PowerShell:
+
+docker compose run --rm --entrypoint bash app
+
+Dentro:
+
+npm install
+
+Depois:
+
+exit
+
+
+
+7. Limpar os caches
+
+docker compose exec app php artisan optimize:clear
+
+8. Rodar o projeto
+Se o seu `docker-compose.yml` já inicia o servidor Laravel automaticamente, basta acessar:
+
+http://localhost:8000
+
+Para conferir se está funcionando:
+
+docker compose ps
+
+
+
+🔄 Nas próximas vezes
+Depois que já configurou o projeto uma vez, não precisa repetir tudo.
+É só:
+
+cd PROJETO-FINAL-2026
+docker compose up -d
+
+E acessar:
+
+http://localhost:8000
+
+Para desligar:
+
+docker compose down
+
+Para ligar novamente:
+
+docker compose up -d
+
+Se tiver duvidas, joga no gpt.
